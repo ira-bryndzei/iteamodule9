@@ -1,6 +1,8 @@
 version: "3"
 services:
-  zabbix:
-  elasticsearch:
+  zabbix-server:
+   image: zabbix/zabbix:1.0.0
+  elasticsearch: 
+    image: elasticsearch:9.0
   logstach:
   kibana:
