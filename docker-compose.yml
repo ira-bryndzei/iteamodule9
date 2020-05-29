@@ -1,8 +1,47 @@
-version: "3"
+version: '3'
 services:
+<<<<<<< HEAD
+  zabbix-mysql:
+   image: mysql:5.7.30
+   command: mysqld --character-set-server=utf8 --collation-server=utf8_bin
+   container_name: zabbix-mysql
+   ports:
+   - '3306:3306'
+   environment:
+       MYSQL_ROOT_PASSWORD: zabbix
+   volumes:
+       - ./mysql-data:/var/lib/mysql
   zabbix-server:
-   image: zabbix/zabbix:1.0.0
-  elasticsearch: 
-    image: elasticsearch:9.0
+   image: zabbix/zabbix-server-mysql:latest
+   container_name: zabbix-server
+   environment:
+       DB_SERVER_HOST: "zabbix-mysql"
+       MYSQL_USER: root
+       MYSQL_PASSWORD: zabbix
+   ports:
+   - '10051:10051'
+   links:
+       - zabbix-mysql
+   depends_on:
+       - zabbix-mysql
+  zabbix-web:
+     image: zabbix/zabbix-web-nginx-mysql:latest
+     container_name: zabbix-web
+     environment:
+       DB_SERVER_HOST: zabbix-mysql
+       MYSQL_USER: root
+       MYSQL_PASSWORD: zabbix
+       ZBX_SERVER_HOST: "zabbix-server"
+       PHP_TZ: Europe/Kiev
+     ports:
+       - '80:8080'
+       - '443:443'
+     links:
+       - zabbix-mysql
+       - zabbix-server
+     depends_on:
+       - zabbix-mysql
+       - zabbix-server
+  elasticsearch:
   logstach:
   kibana:
